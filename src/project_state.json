@@ -1,0 +1,336 @@
+{
+  "schemaVersion": "1.0.0",
+  "projectStateVersion": 19,
+  "summary": "Build an online shopping PWA named \"iMazu\" for selling premium watches, including cart/checkout, COD and manual EasyPaisa/JazzCash payment with transaction ID capture, automated WhatsApp order messaging, and an admin panel.",
+  "architectural_notes": [
+    "Manual payment is out-of-band (EasyPaisa/JazzCash); store transaction ID with the order for verification.",
+    "Order placement should trigger creation of a prefilled WhatsApp message containing customer/order details.",
+    "Add an order status workflow that supports a dedicated manual payment verification step (Pending → Payment Verified → Confirmed) to reduce risk from fake Transaction IDs before confirmation.",
+    "WhatsApp prefilled order message must include Transaction ID only for manual EasyPaisa/JazzCash payments; omit Transaction ID for Cash on Delivery orders, and ensure the full (untruncated) Transaction ID is included when present.",
+    "Product images for “Classy Watch For Men” must be regenerated and the product `images` array replaced with correct URLs pointing to existing static assets under `frontend/public/assets/generated/`, ensuring they render on all storefront pages.",
+    "Support per-product delivery/shipping charge overrides (e.g., shipping cost = 0 for a specific product while other products retain normal delivery charges).",
+    "For the new product (“Brown leather Luxury Watch For Unisex Rs. 19”), prefer the user’s original uploaded images for the product `images` array; do not delete generated square copies from storage, but do not reference them in the storefront.",
+    "For product \"Brown leather Luxury Watch For Unisex Rs. 19\" only: remove all auto-generated square image URLs from the product `images` array; use only the user’s originally uploaded images (already uploaded earlier)."
+  ],
+  "known_issues": [
+    "Bug: WhatsApp order message incorrectly shows Transaction ID for Cash on Delivery orders.",
+    "Bug: WhatsApp order message omits or does not include the full Transaction ID for manual EasyPaisa/JazzCash orders.",
+    "Bug: Product images for “Classy Watch For Men” are broken (broken image icons) across all storefront pages (home/list/details), indicating missing/incorrect static asset paths or image URLs.",
+    "User-reported: The live app appears to be using auto-generated square image versions instead of the original uploaded images for the new product; needs updating to reference the originals."
+  ],
+  "isFixRequest": true,
+  "existing_features": [
+    {
+      "id": "feature-create-the-imazu-customer-storefront-as-a-responsive-app-like-pwa-for-a-premium-watch-store-including-a-home-page-product-catalog-product-details-cart-and-checkout-pages",
+      "title": "Create the iMazu customer storefront as a responsive, app-like PWA for a premium watch store, including a home page, product catalog, product details, cart, and checkout pages.",
+      "reqIds": [
+        "REQ-1"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-checkout-form-fields-for-customer-information-full-name-phone-number-delivery-address-and-payment-selection-cash-on-delivery-easypaisa-jazzcash-manual-payment-and-connect-place-order-to-create-an-order-in-the-backend",
+      "title": "Add checkout form fields for customer information (Full Name, Phone Number, Delivery Address) and payment selection (Cash on Delivery, EasyPaisa/JazzCash Manual Payment), and connect “Place Order” to create an order in the backend.",
+      "reqIds": [
+        "REQ-3"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-for-the-easypaisa-jazzcash-manual-payment-method-display-the-customer-facing-payment-instruction-text-and-show-the-easypaisa-number-0331-3995870-and-add-a-transaction-id-input-field-that-is-required-when-manual-payment-is-selected",
+      "title": "For the “EasyPaisa/JazzCash (Manual)” payment method, display the customer-facing payment instruction text and show the EasyPaisa number “0331-3995870”, and add a Transaction ID input field that is required when manual payment is selected.",
+      "reqIds": [
+        "REQ-4"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-an-automatic-whatsapp-order-message-flow-after-a-successful-place-order-provide-a-one-tap-action-that-opens-whatsapp-with-a-prefilled-message-containing-the-order-details-name-phone-address-payment-method-transaction-id",
+      "title": "Implement an automatic WhatsApp order message flow: after a successful “Place Order”, provide a one-tap action that opens WhatsApp with a prefilled message containing the order details (Name, Phone, Address, Payment Method, Transaction ID).",
+      "reqIds": [
+        "REQ-5"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-create-an-admin-panel-for-imazu-to-manage-products-and-orders-restricted-to-authenticated-admins-using-internet-identity-admins-can-create-edit-deactivate-products-and-view-update-order-status",
+      "title": "Create an admin panel for iMazu to manage products and orders, restricted to authenticated admins using Internet Identity; admins can create/edit/deactivate products and view/update order status.",
+      "reqIds": [
+        "REQ-6"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-apply-a-coherent-premium-visual-theme-for-imazu-colors-typography-spacing-components-and-enforce-it-consistently-across-storefront-checkout-order-confirmation-and-admin-panel-avoiding-a-blue-purple-default-palette",
+      "title": "Apply a coherent, premium visual theme for iMazu (colors, typography, spacing, components) and enforce it consistently across storefront, checkout, order confirmation, and admin panel, avoiding a blue/purple default palette.",
+      "reqIds": [
+        "REQ-7"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-generate-required-brand-static-images-and-render-them-in-the-ui-from-frontend-static-assets-frontend-public-assets-generated-including-logo-and-a-hero-banner-suitable-for-a-premium-watch-store",
+      "title": "Generate required brand/static images and render them in the UI from frontend static assets (frontend/public/assets/generated), including logo and a hero banner suitable for a premium watch store.",
+      "reqIds": [
+        "REQ-8"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-attach-a-full-product-image-set-to-classy-watch-for-men-using-the-user-uploaded-watch-photo-as-visual-reference-add-multiple-image-urls-to-the-product-s-images-array-that-point-to-static-assets-under-frontend-public-assets-generated",
+      "title": "Attach a full product image set to “Classy Watch For Men” using the user-uploaded watch photo as visual reference: add multiple image URLs to the product’s `images` array that point to static assets under `frontend/public/assets/generated/`.",
+      "reqIds": [
+        "REQ-10"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-product-details-page-ui-to-support-browsing-the-full-image-set-for-a-product-show-the-primary-image-and-a-selectable-thumbnail-strip-or-equivalent-when-product-images-length-1",
+      "title": "Update the Product Details page UI to support browsing the full image set for a product: show the primary image and a selectable thumbnail strip (or equivalent) when `product.images.length > 1`.",
+      "reqIds": [
+        "REQ-11"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-admin-order-details-page-to-implement-the-new-workflow-allow-admins-to-verify-payment-enter-review-transaction-id-and-then-confirm-the-order-as-a-separate-action-reflecting-the-new-statuses-in-the-ui",
+      "title": "Update the admin order details page to implement the new workflow: allow admins to verify payment (enter/review Transaction ID) and then confirm the order as a separate action, reflecting the new statuses in the UI.",
+      "reqIds": [
+        "REQ-13"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-admin-orders-list-to-correctly-display-the-new-statuses-and-ensure-the-transaction-id-remains-visible-for-manual-review-where-available",
+      "title": "Update the admin orders list to correctly display the new statuses and ensure the transaction ID remains visible for manual review where available.",
+      "reqIds": [
+        "REQ-14"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-whatsapp-order-message-builder-so-that-cash-on-delivery-cod-orders-do-not-include-any-transaction-id-line-in-the-whatsapp-message-and-manual-easypaisa-jazzcash-orders-include-a-transaction-id-line-only-when-a-transaction-id-exists-format-the-line-exactly-as-transaction-id-value-with-this-capitalization",
+      "title": "Update the WhatsApp order message builder so that Cash on Delivery (COD) orders do not include any Transaction ID line in the WhatsApp message, and manual EasyPaisa/JazzCash orders include a Transaction ID line only when a Transaction ID exists. Format the line exactly as: \"Transaction Id: <VALUE>\" (with this capitalization).",
+      "reqIds": [
+        "REQ-15"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-ensure-that-when-a-buyer-selects-manual-easypaisa-jazzcash-payment-and-enters-a-transaction-id-during-checkout-the-transaction-id-is-saved-on-the-created-order-and-is-available-for-the-whatsapp-message-and-order-confirmation-page-by-extending-the-backend-createorder-api-to-accept-an-optional-transactionid-and-wiring-the-frontend-checkout-order-creation-call-to-send-it",
+      "title": "Ensure that when a buyer selects manual EasyPaisa/JazzCash payment and enters a Transaction ID during checkout, the Transaction ID is saved on the created order and is available for the WhatsApp message and order confirmation page by extending the backend createOrder API to accept an optional transactionId and wiring the frontend checkout/order creation call to send it.",
+      "reqIds": [
+        "REQ-16"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-ensure-cash-on-delivery-cod-orders-never-show-any-transaction-id-in-customer-facing-surfaces-1-the-whatsapp-prefilled-message-must-not-include-any-transaction-id-line-for-cod-orders-even-if-order-transactionid-exists-and-2-the-order-confirmation-page-must-not-render-a-transaction-id-row-for-cod-orders-only-show-it-for-manual-easypaisa-jazzcash-payments-when-a-non-empty-transaction-id-exists",
+      "title": "Ensure Cash on Delivery (COD) orders never show any Transaction ID in customer-facing surfaces: (1) the WhatsApp prefilled message must not include any Transaction ID line for COD orders even if `order.transactionId` exists, and (2) the Order Confirmation page must not render a Transaction ID row for COD orders (only show it for manual EasyPaisa/JazzCash payments when a non-empty Transaction ID exists).",
+      "reqIds": [
+        "REQ-17"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-generate-a-fresh-working-static-image-set-for-the-product-named-exactly-classy-watch-for-men-and-add-the-images-to-frontend-public-assets-generated",
+      "title": "Generate a fresh, working static image set for the product named exactly “Classy Watch For Men” and add the images to `frontend/public/assets/generated/`.",
+      "reqIds": [
+        "REQ-18"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-replace-the-product-s-images-array-for-classy-watch-for-men-so-it-points-to-the-newly-generated-static-assets-under-assets-generated-use-absolute-urls-starting-with",
+      "title": "Replace the product’s `images` array for “Classy Watch For Men” so it points to the newly generated static assets under `/assets/generated/` (use absolute URLs starting with `/`).",
+      "reqIds": [
+        "REQ-19"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-ensure-the-regenerated-classy-watch-for-men-images-render-without-broken-image-icons-across-all-customer-storefront-surfaces-where-product-images-appear-catalog-cards-and-product-details-gallery-at-minimum-and-fall-back-to-assets-generated-watch-placeholder-dim-800x800-png-if-an-image-fails-to-load",
+      "title": "Ensure the regenerated “Classy Watch For Men” images render without broken-image icons across all customer storefront surfaces where product images appear (catalog cards and product details gallery at minimum), and fall back to `/assets/generated/watch-placeholder.dim_800x800.png` if an image fails to load.",
+      "reqIds": [
+        "REQ-20"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-a-new-active-product-to-the-backend-catalog-with-the-exact-name-description-price-and-image-urls-name-brown-leather-luxury-watch-for-unisex-rs-19-price-600-description-this-luxury-brown-leather-watch-is-designed-for-both-men-and-women-offering-a-stylish-and-casual-look-featuring-a-round-analog-display-and-powered-by-a-reliable-quartz-movement-it-provides-accurate-timekeeping-with-a-timeless-appeal-the-genuine-leather-band-adds-a-touch-of-sophistication-while-ensuring-comfort-for-everyday-wear-key-features-quartz-movement-for-precise-timekeeping-round-analog-dial-for-a-classic-stylish-look-high-quality-leather-band-for-durability-and-comfort-fashionable-and-casual-style-ideal-for-daily-wear-waterproof-no-not-suitable-for-submersion-in-water-this-versatile-watch-is-perfect-for-those-who-appreciate-both-elegance-and-functionality-it-makes-an-excellent-accessory-for-any-outfit-whether-for-casual-outings-or-professional-settings-images-point-to-the-3-generated-static-assets-under-assets-generated-absolute-urls-starting-with-ensure-this-product-is-present-after-deployment-e-g-via-init-post-upgrade-seeding-logic-without-requiring-an-admin-to-manually-create-it",
+      "title": "Add a new active product to the backend catalog with the exact name, description, price, and image URLs: Name: \"Brown leather Luxury Watch For Unisex Rs. 19\"; Price: 600; Description: \"This luxury brown leather watch is designed for both men and women, offering a stylish and casual look. Featuring a round analog display and powered by a reliable quartz movement, it provides accurate timekeeping with a timeless appeal. The genuine leather band adds a touch of sophistication while ensuring comfort for everyday wear.Key Features:-Quartz movement for precise timekeeping- Round analog dial for a classic, stylish look- High-quality leather band for durability and comfort- Fashionable and casual style, ideal for daily wear- Waterproof: No (not suitable for submersion in water)This versatile watch is perfect for those who appreciate both elegance and functionality. It makes an excellent accessory for any outfit, whether for casual outings or professional settings.\"; Images: point to the 3 generated static assets under `/assets/generated/` (absolute URLs starting with `/`). Ensure this product is present after deployment (e.g., via init/post-upgrade seeding logic) without requiring an admin to manually create it.",
+      "reqIds": [
+        "REQ-21"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-generate-3-static-product-images-from-the-user-uploaded-screenshots-and-add-them-to-frontend-public-assets-generated-as-square-product-images-center-cropped-as-needed-watch-clearly-visible-use-consistent-sizing-and-format-across-all-3-images",
+      "title": "Generate 3 static product images from the user-uploaded screenshots and add them to `frontend/public/assets/generated/` as square product images (center-cropped as needed, watch clearly visible). Use consistent sizing and format across all 3 images.",
+      "reqIds": [
+        "REQ-22"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-wire-the-new-product-s-images-array-to-the-generated-static-image-asset-urls-absolute-paths-starting-with-assets-generated-so-the-product-renders-correctly-in-the-catalog-product-details-gallery-and-cart",
+      "title": "Wire the new product’s `images` array to the generated static image asset URLs (absolute paths starting with `/assets/generated/`) so the product renders correctly in the catalog, product details gallery, and cart.",
+      "reqIds": [
+        "REQ-23"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-free-delivery-delivery-fee-0-only-for-orders-that-contain-exclusively-the-product-named-exactly-brown-leather-luxury-watch-for-unisex-rs-19-all-other-orders-must-continue-using-the-standard-delivery-fee-used-today-currently-rs-200-update-the-checkout-page-order-summary-and-the-createorder-call-to-use-this-computed-delivery-fee",
+      "title": "Implement free delivery (delivery fee = 0) only for orders that contain exclusively the product named exactly \"Brown leather Luxury Watch For Unisex Rs. 19\"; all other orders must continue using the standard delivery fee used today (currently Rs. 200). Update the Checkout page order summary and the createOrder call to use this computed delivery fee.",
+      "reqIds": [
+        "REQ-24"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-storefront-image-selection-logic-so-the-product-named-exactly-brown-leather-luxury-watch-for-unisex-rs-19-uses-the-image-urls-stored-on-the-product-record-the-product-s-images-array-and-does-not-hardcode-override-to-the-auto-generated-square-copies",
+      "title": "Update the storefront image selection logic so the product named exactly \"Brown leather Luxury Watch For Unisex Rs. 19\" uses the image URLs stored on the product record (the product’s `images` array) and does not hardcode/override to the auto-generated square copies.",
+      "reqIds": [
+        "REQ-25"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-ensure-the-storefront-displays-whatever-images-are-stored-on-the-product-record-for-brown-leather-luxury-watch-for-unisex-rs-19-i-e-no-frontend-hardcoded-override-for-this-product-and-that-catalog-cards-and-the-product-details-gallery-render-those-product-record-image-urls",
+      "title": "Ensure the storefront displays whatever images are stored on the product record for \"Brown leather Luxury Watch For Unisex Rs. 19\" (i.e., no frontend hardcoded override for this product), and that catalog cards and the product details gallery render those product-record image URLs.",
+      "reqIds": [
+        "REQ-29"
+      ],
+      "version": 1
+    }
+  ],
+  "new_feature_requests": [
+    {
+      "id": "AR-1",
+      "summary": "Create \"iMazu\" premium watch store as an app-like PWA storefront",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-2",
+      "summary": "Implement cart + checkout flow for watch purchases",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-3",
+      "summary": "Support payment methods: Cash on Delivery (COD) and manual EasyPaisa/JazzCash payment",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-4",
+      "summary": "Show customer-facing manual payment instructions text and display EasyPaisa number 0331-3995870",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-5",
+      "summary": "Add Transaction ID input field to confirm manual payment during checkout",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-6",
+      "summary": "Generate automatic WhatsApp order message on Place Order including Name, Phone, Address, Payment Method, Transaction ID",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-7",
+      "summary": "Provide an admin panel to manage the store (orders/products)",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-9",
+      "summary": "Implement a backend data model and APIs to support products and orders for iMazu, including persistent storage for: products (name, description, price, images, active/inactive) and orders (customer details, cart line items, totals, payment method, transaction ID when provided, timestamps, status).",
+      "reqIds": [
+        "REQ-2"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-10",
+      "summary": "Add a new product to the catalog: “Classy Watch For Men” priced at 700, with a generated full image set and a premium description",
+      "reqIds": [],
+      "status": "in_progress"
+    },
+    {
+      "id": "AR-11",
+      "summary": "Create a new product in the backend catalog with the exact name “Classy Watch For Men”, price 700, a premium English description, and mark it active/available.",
+      "reqIds": [
+        "REQ-9"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-12",
+      "summary": "Add a dedicated manual payment verification status step in admin order workflow: Pending → Payment Verified → Confirmed, so admins can review Transaction ID before confirming orders.",
+      "reqIds": [],
+      "status": "in_progress"
+    },
+    {
+      "id": "AR-13",
+      "summary": "Update the backend order status model to support a dedicated manual payment verification step so that orders can move through: Pending → Payment Verified → Confirmed (and then Delivered / Cancelled as applicable).",
+      "reqIds": [
+        "REQ-12"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-14",
+      "summary": "Fix WhatsApp order message so Cash on Delivery (COD) orders never include a Transaction ID line",
+      "reqIds": [
+        "REQ-15"
+      ],
+      "status": "in_progress"
+    },
+    {
+      "id": "AR-15",
+      "summary": "Add a new product: \"Brown leather Luxury Watch For Unisex Rs. 19\" priced at 600, using all 3 provided images, with the provided description, and make delivery/shipping free only for this product (per-product shipping override).",
+      "reqIds": [],
+      "status": "in_progress"
+    },
+    {
+      "id": "AR-16",
+      "summary": "Update the new product (“Brown leather Luxury Watch For Unisex Rs. 19”) to display only the user’s original uploaded images in the product `images` array; keep any auto-generated square copies stored but not referenced.",
+      "reqIds": [],
+      "status": "in_progress"
+    },
+    {
+      "id": "AR-18",
+      "summary": "Update the backend’s seeded/initialized product record for the product named exactly \"Brown leather Luxury Watch For Unisex Rs. 19\" so that its `images` array points to the user’s original uploaded image URLs (not the auto-generated square copies), and keep any auto-generated square copies on disk unchanged.",
+      "reqIds": [
+        "REQ-26"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-19",
+      "summary": "Update the backend’s seeded/initialized product record for the product named exactly \"Brown leather Luxury Watch For Unisex Rs. 19\" so that its `images` array contains ONLY the user’s original previously-uploaded image URLs, and remove all references to any auto-generated square images from that product’s `images` array.",
+      "reqIds": [
+        "REQ-27"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-20",
+      "summary": "Ensure existing deployments are corrected on upgrade by adding/using conditional upgrade logic (migration) so that any already-stored product named exactly \"Brown leather Luxury Watch For Unisex Rs. 19\" has its `images` array rewritten to ONLY the user’s original previously-uploaded image URLs (removing any auto-generated square image references) without requiring an admin to manually edit the product.",
+      "reqIds": [
+        "REQ-28"
+      ],
+      "status": "pending"
+    }
+  ],
+  "gameProjectType": "none",
+  "projectName": "iMazu",
+  "clarification_mode": "instant",
+  "clarification_rounds": 0
+}

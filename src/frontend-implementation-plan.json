@@ -1,0 +1,33 @@
+{
+  "kind": "implementation_plan",
+  "version": "1.0",
+  "title": "Storefront: display product-record images for Brown leather Luxury Watch (no frontend overrides)",
+  "requirements": [
+    {
+      "id": "REQ-29",
+      "summary": "Ensure catalog cards and product details gallery render the backend-provided product.images for \"Brown leather Luxury Watch For Unisex Rs. 19\" with robust image-load fallback and no frontend special-casing that swaps in auto-generated square images.",
+      "acceptanceCriteria": [
+        "For the product named exactly \"Brown leather Luxury Watch For Unisex Rs. 19\", the catalog card image and product details gallery images are sourced from `product.images` returned by the backend and match the corrected `images` array.",
+        "There is no frontend special-casing that substitutes auto-generated square images for this product.",
+        "If any of the product-record images fail to load, the UI falls back to `/assets/generated/watch-placeholder.dim_800x800.png` (no broken-image icon shown)."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/utils/productImages.ts",
+          "operation": "modify",
+          "description": "Ensure image normalization utilities do not introduce any special-casing for \"Brown leather Luxury Watch For Unisex Rs. 19\" (i.e., always return normalized `images` from the product record for this product) and keep the placeholder fallback path `/assets/generated/watch-placeholder.dim_800x800.png` as the default when `images` is empty."
+        },
+        {
+          "path": "frontend/src/components/storefront/ProductImageGallery.tsx",
+          "operation": "modify",
+          "description": "Harden gallery rendering to safely handle empty/invalid `images` arrays by always rendering at least one image and ensuring `onError` swaps the failed image to `/assets/generated/watch-placeholder.dim_800x800.png` (including single-image mode and thumbnails) to avoid broken-image icons."
+        },
+        {
+          "path": "frontend/src/components/storefront/ProductCard.tsx",
+          "operation": "modify",
+          "description": "Confirm catalog card images remain sourced from `product.images` (no product-name-based overrides for the Brown leather product) and ensure the existing `onError` fallback reliably swaps to `/assets/generated/watch-placeholder.dim_800x800.png` without leaving a broken-image icon."
+        }
+      ]
+    }
+  ]
+}

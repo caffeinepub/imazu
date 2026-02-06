@@ -1,0 +1,52 @@
+{
+  "kind": "spec_vs_diff_report",
+  "version": "1.0",
+  "generatedAt": "2026-02-06T23:22:19.058Z",
+  "summary": "Diff adds a backend migration that rewrites images for the specific product name, and updates storefront image rendering/fallback behavior. However, seeded init-state update for the product is not evidenced, the migration is not conditional (it rewrites on every upgrade), and the frontend introduces an unrequested image override for a different product plus other unrelated workflow changes per the provided file summaries.",
+  "missing_requirements": [
+    {
+      "id": "REQ-27",
+      "requirement": "Update the backend’s seeded/initialized product record for the product named exactly \"Brown leather Luxury Watch For Unisex Rs. 19\" so that its `images` array contains ONLY the user’s original previously-uploaded image URLs, and remove all references to any auto-generated square images from that product’s `images` array.",
+      "reason": "The diff shows upgrade-time migration logic for existing state, but does not show any change to the backend's init/seeded product definition for fresh deploys. `backend/main.mo` is truncated and contains no visible seeded product record update for this specific product.",
+      "evidence": [
+        "backend/main.mo (truncated)",
+        "backend/migration.mo"
+      ]
+    },
+    {
+      "id": "REQ-28",
+      "requirement": "Upgrade logic is conditional and does not repeatedly rewrite state unnecessarily on subsequent upgrades when the `images` array is already correct.",
+      "reason": "`backend/migration.mo` rewrites the `images` array whenever the product name matches, without checking whether the current `images` already equal the desired originals. This will repeatedly overwrite the images on every upgrade.",
+      "evidence": [
+        "backend/migration.mo"
+      ]
+    }
+  ],
+  "hallucinated_features": [
+    {
+      "description": "Frontend hard-coded override that replaces images for the product \"Classy Watch For Men\" with a fixed local generated image set.",
+      "reason": "BuildRequest explicitly states not to change images for \"Classy Watch For Men\" or any other product beyond what is necessary for the \"Brown leather...\" product. This override changes another product’s displayed images.",
+      "evidence": [
+        "frontend/src/utils/productImages.ts",
+        "frontend-file-summaries.txt"
+      ]
+    },
+    {
+      "description": "Additional unrelated storefront/admin/checkout/WhatsApp workflow changes (e.g., new admin order workflow mutations, delivery fee computation changes, WhatsApp message formatting changes).",
+      "reason": "BuildRequest non-goals explicitly disallow changing payment, checkout, delivery-fee, WhatsApp, or admin workflow behavior as part of this request. The provided file summaries describe such changes.",
+      "evidence": [
+        "frontend-file-summaries.txt"
+      ]
+    }
+  ],
+  "confidence": 0.72,
+  "changed_files": [
+    "backend/main.mo",
+    "backend/migration.mo",
+    "frontend-file-summaries.txt",
+    "frontend/src/components/storefront/ProductCard.tsx",
+    "frontend/src/components/storefront/ProductImageGallery.tsx",
+    "frontend/src/utils/productImages.ts",
+    "project_state.json"
+  ]
+}

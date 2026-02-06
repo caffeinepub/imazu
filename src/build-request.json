@@ -1,0 +1,89 @@
+{
+  "kind": "build_request",
+  "title": "Restore original uploaded images for “Brown leather Luxury Watch For Unisex Rs. 19” (remove auto-generated square images)",
+  "priority": "normal",
+  "requirements": [
+    {
+      "id": "REQ-27",
+      "text": "Update the backend’s seeded/initialized product record for the product named exactly \"Brown leather Luxury Watch For Unisex Rs. 19\" so that its `images` array contains ONLY the user’s original previously-uploaded image URLs, and remove all references to any auto-generated square images from that product’s `images` array.",
+      "target": "backend",
+      "source": {
+        "messageIds": [
+          "msg-8",
+          "msg-12"
+        ],
+        "quotes": [
+          "Brown leather only",
+          "Remove all Auto generated square images"
+        ]
+      },
+      "acceptanceCriteria": [
+        "After a fresh deploy (init state), the product named exactly \"Brown leather Luxury Watch For Unisex Rs. 19\" exists and its `images` array contains only the original uploaded image URLs (no auto-generated square image URLs).",
+        "No other products’ `images` arrays are changed by this update."
+      ]
+    },
+    {
+      "id": "REQ-28",
+      "text": "Ensure existing deployments are corrected on upgrade by adding/using conditional upgrade logic (migration) so that any already-stored product named exactly \"Brown leather Luxury Watch For Unisex Rs. 19\" has its `images` array rewritten to ONLY the user’s original previously-uploaded image URLs (removing any auto-generated square image references) without requiring an admin to manually edit the product.",
+      "target": "backend",
+      "source": {
+        "messageIds": [
+          "msg-8",
+          "msg-12"
+        ],
+        "quotes": [
+          "Uploaded earlier",
+          "Remove all Auto generated square images"
+        ]
+      },
+      "acceptanceCriteria": [
+        "After canister upgrade, if a product named exactly \"Brown leather Luxury Watch For Unisex Rs. 19\" already exists, its `images` array is updated to only the original uploaded image URLs.",
+        "If the product does not exist, the upgrade does not trap and does not create duplicate products.",
+        "Upgrade logic is conditional and does not repeatedly rewrite state unnecessarily on subsequent upgrades when the `images` array is already correct."
+      ]
+    },
+    {
+      "id": "REQ-29",
+      "text": "Ensure the storefront displays whatever images are stored on the product record for \"Brown leather Luxury Watch For Unisex Rs. 19\" (i.e., no frontend hardcoded override for this product), and that catalog cards and the product details gallery render those product-record image URLs.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-8"
+        ],
+        "quotes": [
+          "Please use images which I provided you don't replace my images"
+        ]
+      },
+      "acceptanceCriteria": [
+        "For the product named exactly \"Brown leather Luxury Watch For Unisex Rs. 19\", the catalog card image and product details gallery images are sourced from `product.images` returned by the backend and match the corrected `images` array.",
+        "There is no frontend special-casing that substitutes auto-generated square images for this product.",
+        "If any of the product-record images fail to load, the UI falls back to `/assets/generated/watch-placeholder.dim_800x800.png` (no broken-image icon shown)."
+      ]
+    }
+  ],
+  "constraints": [
+    "Backend must remain a single-actor Motoko canister (all logic in `backend/main.mo`).",
+    "Only introduce/modify `backend/migration.mo` if needed to safely upgrade existing state (conditional migration).",
+    "Do not edit any frontend files under immutable paths: `frontend/src/hooks/useInternetIdentity.ts`, `frontend/src/hooks/useInternetIdentity.tsx`, `frontend/src/hooks/useActor.ts`, `frontend/src/main.tsx`, `frontend/src/components/ui/*`.",
+    "Use English for any user-facing text."
+  ],
+  "nonGoals": [
+    "Do not generate new product images or replace the user’s original uploaded images with AI-generated alternatives.",
+    "Do not change the images for \"Classy Watch For Men\" or any other product beyond what is necessary to fix \"Brown leather Luxury Watch For Unisex Rs. 19\".",
+    "Do not change payment, checkout, delivery-fee, WhatsApp, or admin workflow behavior as part of this request."
+  ],
+  "imageRequirements": {
+    "required": [],
+    "edits": []
+  },
+  "userProfileUpdate": {
+    "goalsToAdd": [],
+    "goalsToRemove": [],
+    "preferencesToAdd": [],
+    "preferencesToRemove": [],
+    "miscToAdd": [],
+    "miscToRemove": [],
+    "fieldsToSet": {},
+    "fieldsToDelete": []
+  }
+}

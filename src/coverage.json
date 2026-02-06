@@ -1,0 +1,59 @@
+{
+  "kind": "coverage_report",
+  "version": "1.0",
+  "generatedAt": "2026-02-06T23:22:19.061Z",
+  "sources": {
+    "buildRequest": true,
+    "implementationPlan": true
+  },
+  "requirements": {
+    "total": 3,
+    "implemented": 1,
+    "items": [
+      {
+        "id": "REQ-27",
+        "summary": "Update the backend’s seeded/initialized product record for the product named exactly \"Brown leather Luxury Watch For Unisex Rs. 19\" so that its `images` array contains ONLY the user’s original previously-uploaded image URLs, and remove all references to any auto-generated square images from that product’s `images` array.",
+        "status": "unknown",
+        "plannedFiles": [],
+        "matchedFiles": []
+      },
+      {
+        "id": "REQ-28",
+        "summary": "Ensure existing deployments are corrected on upgrade by adding/using conditional upgrade logic (migration) so that any already-stored product named exactly \"Brown leather Luxury Watch For Unisex Rs. 19\" has its `images` array rewritten to ONLY the user’s original previously-uploaded image URLs (removing any auto-generated square image references) without requiring an admin to manually edit the product.",
+        "status": "unknown",
+        "plannedFiles": [],
+        "matchedFiles": []
+      },
+      {
+        "id": "REQ-29",
+        "summary": "Ensure the storefront displays whatever images are stored on the product record for \"Brown leather Luxury Watch For Unisex Rs. 19\" (i.e., no frontend hardcoded override for this product), and that catalog cards and the product details gallery render those product-record image URLs.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/utils/productImages.ts",
+          "frontend/src/components/storefront/ProductImageGallery.tsx",
+          "frontend/src/components/storefront/ProductCard.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/utils/productImages.ts",
+          "frontend/src/components/storefront/ProductImageGallery.tsx",
+          "frontend/src/components/storefront/ProductCard.tsx"
+        ]
+      }
+    ]
+  },
+  "changedFiles": [
+    "backend/main.mo",
+    "backend/migration.mo",
+    "build-request.json",
+    "feature_evidence.json",
+    "frontend-file-summaries.txt",
+    "frontend-implementation-plan.json",
+    "frontend/src/components/storefront/ProductCard.tsx",
+    "frontend/src/components/storefront/ProductImageGallery.tsx",
+    "frontend/src/utils/productImages.ts",
+    "project_state.json",
+    "scratch/component-selection.json",
+    "spec.md",
+    "spec_vs_diff_report.json"
+  ]
+}
