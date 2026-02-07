@@ -6,7 +6,7 @@
   "frontend/src/lib/payment.ts": "Payment utility functions and constants for payment method labels, EasyPaisa number, manual payment instructions, and payment method type checking.",
   "frontend/src/lib/whatsapp.ts": "WhatsApp integration utilities that build prefilled order messages with conditional Transaction ID display (only for manual payments when present, formatted as \"Transaction Id: <VALUE>\") and generate WhatsApp deep links.",
   "frontend/src/components/storefront/StorefrontLayout.tsx": "Main storefront layout component with sticky header, logo, navigation, cart icon with item count badge, mobile menu, and footer.",
-  "frontend/src/components/storefront/ProductCard.tsx": "Reusable product card component that displays product image from backend with onError handler that falls back to watch placeholder, preventing broken image icons in catalog.",
+  "frontend/src/components/storefront/ProductCard.tsx": "Product card component that uses LoadableProductImage to ensure images display correctly with placeholder-first loading behavior.",
   "frontend/src/components/storefront/QuantityStepper.tsx": "Touch-friendly quantity control component with increment/decrement buttons and min/max constraints.",
   "frontend/src/components/checkout/CheckoutForm.tsx": "Comprehensive checkout form with customer information inputs, payment method selection, and order submission that now uses computed delivery fee based on cart contents and displays \"FREE\" when delivery is free.",
   "frontend/src/components/auth/LoginButton.tsx": "Internet Identity login/logout button with loading states and query cache clearing on logout.",
@@ -26,8 +26,9 @@
   "frontend/src/index.css": "Global styles with OKLCH color system featuring dark charcoal background with warm gold/bronze accents for premium watch store aesthetic.",
   "frontend/index.html": "HTML entry point with PWA metadata, manifest link, theme color, and app icon references.",
   "frontend/public/manifest.webmanifest": "PWA manifest configuration for iMazu with app name, icons, theme colors, and standalone display mode.",
-  "frontend/src/utils/productImages.ts": "Utility functions for normalizing product image URLs with override only for \"Classy Watch For Men\"; all other products including \"Brown leather Luxury Watch For Unisex Rs. 19\" use their backend-provided images array with placeholder fallback when empty.",
-  "frontend/src/components/storefront/ProductImageGallery.tsx": "Product image gallery component with robust error handling that tracks failed images, ensures at least one image is always displayed, and falls back to placeholder on load errors for both main and thumbnail images.",
+  "frontend/src/utils/productImages.ts": "Utility functions for normalizing product image URLs with overrides for \"Classy Watch For Men\" and \"Casuilt Original Leather Watches For Men\" to ensure correct image paths are used, with placeholder fallback when images array is empty.",
+  "frontend/src/components/storefront/ProductImageGallery.tsx": "Product image gallery with main image and thumbnails using LoadableProductImage for reliable placeholder fallback and load-state handling.",
   "frontend/src/lib/orderStatus.ts": "Shared utility functions for formatting OrderStatus enum values into English display labels and mapping them to appropriate Badge variants (delivered=default, cancelled=destructive, others=outline).",
-  "frontend/src/lib/deliveryFee.ts": "Delivery fee calculation utility that returns Rs. 0 when cart contains only \"Brown leather Luxury Watch For Unisex Rs. 19\", otherwise Rs. 200."
+  "frontend/src/lib/deliveryFee.ts": "Delivery fee calculation utility that returns Rs. 200 for all orders.",
+  "frontend/src/components/storefront/LoadableProductImage.tsx": "Reusable image component that displays placeholder by default, preloads the actual image in background, and only reveals it after successful load to prevent black boxes on mobile Chrome."
 }

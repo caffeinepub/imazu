@@ -7,18 +7,21 @@ export interface None {
     __kind__: "None";
 }
 export type Option<T> = Some<T> | None;
-export type OrderId = bigint;
+export class ExternalBlob {
+    getBytes(): Promise<Uint8Array<ArrayBuffer>>;
+    getDirectURL(): string;
+    static fromURL(url: string): ExternalBlob;
+    static fromBytes(blob: Uint8Array<ArrayBuffer>): ExternalBlob;
+    withUploadProgress(onProgress: (percentage: number) => void): ExternalBlob;
+}
+export interface UserProfile {
+    name: string;
+}
 export type Time = bigint;
 export interface LineItem {
     productId: ProductId;
     quantity: bigint;
     price: bigint;
-}
-export type ProductId = bigint;
-export interface CustomerInfo {
-    name: string;
-    address: string;
-    phone: string;
 }
 export interface Order {
     id: OrderId;
@@ -33,8 +36,11 @@ export interface Order {
     subtotal: bigint;
     transactionId?: string;
 }
-export interface UserProfile {
+export type ProductId = bigint;
+export interface CustomerInfo {
     name: string;
+    address: string;
+    phone: string;
 }
 export interface Product {
     id: ProductId;
@@ -44,6 +50,7 @@ export interface Product {
     price: bigint;
     images: Array<string>;
 }
+export type OrderId = bigint;
 export enum OrderStatus {
     cancelled = "cancelled",
     pending = "pending",
@@ -80,5 +87,6 @@ export interface backendInterface {
     markOrderDelivered(id: OrderId): Promise<void>;
     saveCallerUserProfile(profile: UserProfile): Promise<void>;
     updateProduct(id: ProductId, name: string, description: string, price: bigint, images: Array<string>, active: boolean): Promise<Product>;
+    uploadProductImage(file: ExternalBlob, productId: ProductId, filename: string): Promise<ExternalBlob>;
     verifyPayment(id: OrderId, transactionId: string): Promise<void>;
 }

@@ -1,26 +1,4 @@
 {
   "kind": "feature_evidence_report",
-  "features": [
-    {
-      "featureId": "feature-ensure-the-storefront-displays-whatever-images-are-stored-on-the-product-record-for-brown-leather-luxury-watch-for-unisex-rs-19-i-e-no-frontend-hardcoded-override-for-this-product-and-that-catalog-cards-and-the-product-details-gallery-render-those-product-record-image-urls",
-      "featureTitle": "Ensure the storefront displays whatever images are stored on the product record for \"Brown leather Luxury Watch For Unisex Rs. 19\" (i.e., no frontend hardcoded override for this product), and that catalog cards and the product details gallery render those product-record image URLs.",
-      "files": [
-        "frontend/src/components/storefront/ProductCard.tsx",
-        "frontend/src/components/storefront/ProductImageGallery.tsx",
-        "frontend/src/utils/productImages.ts"
-      ],
-      "components": [
-        "authorization@4.0.0",
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
-      ],
-      "testIds": [
-        "REQ-29"
-      ],
-      "confidence": "high"
-    }
-  ]
+  "features": []
 }

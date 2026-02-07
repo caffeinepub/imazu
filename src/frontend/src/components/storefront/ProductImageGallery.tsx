@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { cn } from '@/lib/utils';
+import LoadableProductImage from './LoadableProductImage';
 
 interface ProductImageGalleryProps {
   images: string[];
@@ -8,21 +9,13 @@ interface ProductImageGalleryProps {
 
 export default function ProductImageGallery({ images, productName }: ProductImageGalleryProps) {
   const [selectedIndex, setSelectedIndex] = useState(0);
-  const [failedImages, setFailedImages] = useState<Set<number>>(new Set());
   
   // Reset selected index when images change to prevent out-of-bounds
   useEffect(() => {
     if (selectedIndex >= images.length) {
       setSelectedIndex(0);
     }
-    // Reset failed images when images array changes
-    setFailedImages(new Set());
   }, [images, selectedIndex]);
-
-  const handleImageError = (e: React.SyntheticEvent<HTMLImageElement>, index: number) => {
-    e.currentTarget.src = '/assets/generated/watch-placeholder.dim_800x800.png';
-    setFailedImages(prev => new Set(prev).add(index));
-  };
   
   // Ensure we always have at least one image to display
   const displayImages = images.length > 0 ? images : ['/assets/generated/watch-placeholder.dim_800x800.png'];
@@ -31,11 +24,9 @@ export default function ProductImageGallery({ images, productName }: ProductImag
   if (displayImages.length <= 1) {
     return (
       <div className="aspect-square overflow-hidden rounded-lg bg-muted">
-        <img 
-          src={displayImages[0]} 
+        <LoadableProductImage
+          src={displayImages[0]}
           alt={productName}
-          onError={(e) => handleImageError(e, 0)}
-          className="w-full h-full object-cover" 
         />
       </div>
     );
@@ -45,11 +36,9 @@ export default function ProductImageGallery({ images, productName }: ProductImag
     <div className="space-y-4">
       {/* Main Image */}
       <div className="aspect-square overflow-hidden rounded-lg bg-muted">
-        <img 
-          src={displayImages[selectedIndex]} 
+        <LoadableProductImage
+          src={displayImages[selectedIndex]}
           alt={`${productName} - Image ${selectedIndex + 1}`}
-          onError={(e) => handleImageError(e, selectedIndex)}
-          className="w-full h-full object-cover" 
         />
       </div>
 
@@ -66,11 +55,9 @@ export default function ProductImageGallery({ images, productName }: ProductImag
                 : "border-transparent hover:border-muted-foreground/30"
             )}
           >
-            <img 
-              src={image} 
+            <LoadableProductImage
+              src={image}
               alt={`${productName} thumbnail ${index + 1}`}
-              onError={(e) => handleImageError(e, index)}
-              className="w-full h-full object-cover" 
             />
           </button>
         ))}

@@ -3,6 +3,7 @@ import type { Product } from '../../backend';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { getPrimaryProductImage } from '../../utils/productImages';
+import LoadableProductImage from './LoadableProductImage';
 
 interface ProductCardProps {
   product: Product;
@@ -11,20 +12,14 @@ interface ProductCardProps {
 export default function ProductCard({ product }: ProductCardProps) {
   const imageUrl = getPrimaryProductImage(product.images);
 
-  const handleImageError = (e: React.SyntheticEvent<HTMLImageElement>) => {
-    // Fallback to placeholder if image fails to load
-    e.currentTarget.src = '/assets/generated/watch-placeholder.dim_800x800.png';
-  };
-
   return (
     <Link to="/product/$productId" params={{ productId: product.id.toString() }}>
       <Card className="group overflow-hidden hover:shadow-lg transition-all duration-300 cursor-pointer h-full">
         <div className="aspect-square overflow-hidden bg-muted">
-          <img
+          <LoadableProductImage
             src={imageUrl}
             alt={product.name}
-            onError={handleImageError}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+            className="group-hover:scale-105 transition-transform duration-300"
           />
         </div>
         <CardContent className="p-4">

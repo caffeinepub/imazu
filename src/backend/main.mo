@@ -6,13 +6,17 @@ import Text "mo:core/Text";
 import Runtime "mo:core/Runtime";
 import Time "mo:core/Time";
 import Iter "mo:core/Iter";
-import Migration "migration";
 
-import MixinAuthorization "authorization/MixinAuthorization";
 import AccessControl "authorization/access-control";
+import MixinAuthorization "authorization/MixinAuthorization";
+import MixinStorage "blob-storage/Mixin";
+import Storage "blob-storage/Storage";
 
-(with migration = Migration.run)
+// Migrate actor state on upgrade
 actor {
+  // Include storage mixin
+  include MixinStorage();
+
   // Setup Authorization State
   let accessControlState = AccessControl.initState();
   include MixinAuthorization(accessControlState);
@@ -59,7 +63,22 @@ actor {
     active : Bool;
   };
 
-  let products = Map.empty<ProductId, Product>();
+  // Only keep the single active product
+  let products = Map.singleton<Nat, Product>(
+    1,
+    {
+      id = 1;
+      name = "Casuilt Original Leather Watches For Men";
+      description = "The Casuilt Original Leather Watch for Men combines classic elegance with modern craftsmanship. Featuring a durable stainless steel case, genuine leather strap, and precise quartz movement, this watch is perfect for any occasion. Its sleek design and reliable performance make it an essential accessory for the modern man.";
+      price = 650;
+      images = [
+        "/assets/generated/Screenshot_2026-02-07-03-49-20-86_f9b251d62f6eb22790b83e2e3c410dd0-1.jpg",
+        "/assets/generated/Screenshot_2026-02-07-03-49-38-67_f9b251d62f6eb22790b83e2e3c410dd0-1.jpg",
+        "/assets/generated/Screenshot_2026-02-07-03-49-00-52_f9b251d62f6eb22790b83e2e3c410dd0-1.jpg",
+      ];
+      active = true;
+    },
+  );
 
   // Product Management - Public queries (no auth needed for viewing)
   public query func getAllProducts() : async [Product] {
@@ -79,7 +98,6 @@ actor {
     };
   };
 
-  // Product Management - Admin only
   public shared ({ caller }) func createProduct(
     name : Text,
     description : Text,
@@ -200,6 +218,30 @@ actor {
         #equal;
       };
     };
+  };
+
+  // Upload Product Images
+  public shared ({ caller }) func uploadProductImage(
+    file : Storage.ExternalBlob,
+    productId : ProductId,
+    filename : Text
+  ) : async Storage.ExternalBlob {
+    // Validate file extension
+    if (not (hasJpgPngExtension(filename))) {
+      Runtime.trap("Invalid file extension. Only .jpg and .png are allowed.");
+    };
+
+    // Validate product existence
+    switch (products.get(productId)) {
+      case (null) { Runtime.trap("Product not found") };
+      case (?_) { };
+    };
+
+    file;
+  };
+
+  func hasJpgPngExtension(filename : Text) : Bool {
+    filename.endsWith(#text ".jpg") or filename.endsWith(#text ".png") or filename.endsWith(#text ".jpeg");
   };
 
   // Order Queries - Admin only

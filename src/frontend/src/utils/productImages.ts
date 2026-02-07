@@ -49,7 +49,7 @@ export function normalizeProductImages(images: string[]): string[] {
  * @returns Corrected image array for known products, or normalized original images
  */
 export function getProductImages(productName: string, images: string[]): string[] {
-  // Override for "Classy Watch For Men" with new working image set
+  // Override for "Classy Watch For Men" with working image set
   if (productName === "Classy Watch For Men") {
     return [
       '/assets/generated/imazu-classy-watch-01-front.dim_1000x1000.png',
@@ -60,7 +60,15 @@ export function getProductImages(productName: string, images: string[]): string[
     ];
   }
   
-  // For all other products including "Brown leather Luxury Watch For Unisex Rs. 19",
-  // use the product's own images array from backend (no override)
+  // Override for "Casuilt Original Leather Watches For Men" with correct paths to user-uploaded images
+  if (productName === "Casuilt Original Leather Watches For Men") {
+    return [
+      '/assets/Screenshot_2026-02-07-03-49-20-86_f9b251d62f6eb22790b83e2e3c410dd0-1.jpg',
+      '/assets/Screenshot_2026-02-07-03-49-38-67_f9b251d62f6eb22790b83e2e3c410dd0-1.jpg',
+      '/assets/Screenshot_2026-02-07-03-49-00-52_f9b251d62f6eb22790b83e2e3c410dd0-1.jpg',
+    ];
+  }
+  
+  // For all other products, use the product's own images array from backend (no override)
   return normalizeProductImages(images);
 }

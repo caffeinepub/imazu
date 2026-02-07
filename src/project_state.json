@@ -1,22 +1,21 @@
 {
   "schemaVersion": "1.0.0",
-  "projectStateVersion": 19,
-  "summary": "Build an online shopping PWA named \"iMazu\" for selling premium watches, including cart/checkout, COD and manual EasyPaisa/JazzCash payment with transaction ID capture, automated WhatsApp order messaging, and an admin panel.",
+  "projectStateVersion": 25,
+  "summary": "Build an online shopping PWA named \"iMazu\" for selling premium watches, including cart/checkout, COD and manual EasyPaisa/JazzCash payment with transaction ID capture, automated WhatsApp order messaging, and an admin panel. Catalog scope changed to a single active product: \"Casuilt Original Leather Watches For Men\" (price 650) using only the user’s 3 original uploaded images (no AI-generated square images).",
   "architectural_notes": [
     "Manual payment is out-of-band (EasyPaisa/JazzCash); store transaction ID with the order for verification.",
     "Order placement should trigger creation of a prefilled WhatsApp message containing customer/order details.",
     "Add an order status workflow that supports a dedicated manual payment verification step (Pending → Payment Verified → Confirmed) to reduce risk from fake Transaction IDs before confirmation.",
     "WhatsApp prefilled order message must include Transaction ID only for manual EasyPaisa/JazzCash payments; omit Transaction ID for Cash on Delivery orders, and ensure the full (untruncated) Transaction ID is included when present.",
-    "Product images for “Classy Watch For Men” must be regenerated and the product `images` array replaced with correct URLs pointing to existing static assets under `frontend/public/assets/generated/`, ensuring they render on all storefront pages.",
-    "Support per-product delivery/shipping charge overrides (e.g., shipping cost = 0 for a specific product while other products retain normal delivery charges).",
-    "For the new product (“Brown leather Luxury Watch For Unisex Rs. 19”), prefer the user’s original uploaded images for the product `images` array; do not delete generated square copies from storage, but do not reference them in the storefront.",
-    "For product \"Brown leather Luxury Watch For Unisex Rs. 19\" only: remove all auto-generated square image URLs from the product `images` array; use only the user’s originally uploaded images (already uploaded earlier)."
+    "Catalog should contain only one active seeded product: \"Casuilt Original Leather Watches For Men\" (price 650).",
+    "For \"Casuilt Original Leather Watches For Men\": use all three of the user’s original uploaded image URLs in the product `images` array; do not reference or generate any AI-generated square images."
   ],
   "known_issues": [
     "Bug: WhatsApp order message incorrectly shows Transaction ID for Cash on Delivery orders.",
     "Bug: WhatsApp order message omits or does not include the full Transaction ID for manual EasyPaisa/JazzCash orders.",
     "Bug: Product images for “Classy Watch For Men” are broken (broken image icons) across all storefront pages (home/list/details), indicating missing/incorrect static asset paths or image URLs.",
-    "User-reported: The live app appears to be using auto-generated square image versions instead of the original uploaded images for the new product; needs updating to reference the originals."
+    "User-reported: The live app appears to be using auto-generated square image versions instead of the original uploaded images for the new product; needs updating to reference the originals.",
+    "Bug: On mobile Chrome, product images are not rendering and appear as a black screen/black box in the image area (app otherwise runs normally), reported after the latest image update."
   ],
   "isFixRequest": true,
   "existing_features": [
@@ -203,6 +202,38 @@
         "REQ-29"
       ],
       "version": 1
+    },
+    {
+      "id": "feature-fix-storefront-product-image-rendering-so-that-on-mobile-chrome-the-catalog-cards-and-product-details-gallery-do-not-show-a-black-box-in-the-image-area-product-images-must-either-render-correctly-or-visibly-fall-back-to-the-existing-placeholder-image",
+      "title": "Fix storefront product image rendering so that on mobile Chrome the catalog cards and product details gallery do not show a black box in the image area; product images must either render correctly or visibly fall back to the existing placeholder image.",
+      "reqIds": [
+        "REQ-30"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-a-robust-image-loading-ui-behavior-for-product-images-so-the-image-area-never-appears-as-a-blank-black-rectangle-while-the-image-is-loading-instead-show-the-existing-placeholder-or-a-neutral-skeleton-until-the-image-onload-event-fires-and-keep-the-placeholder-on-onerror-apply-this-consistently-to-both-frontend-src-components-storefront-productcard-tsx-and-frontend-src-components-storefront-productimagegallery-tsx",
+      "title": "Add a robust image-loading UI behavior for product images so the image area never appears as a blank/black rectangle while the image is loading; instead, show the existing placeholder (or a neutral skeleton) until the image `onLoad` event fires, and keep the placeholder on `onError`. Apply this consistently to both `frontend/src/components/storefront/ProductCard.tsx` and `frontend/src/components/storefront/ProductImageGallery.tsx`.",
+      "reqIds": [
+        "REQ-31"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-the-user-s-3-uploaded-images-as-static-product-images-in-frontend-public-assets-generated-without-ai-generated-square-cropped-replacements-and-wire-the-single-product-s-images-array-to-these-exact-asset-urls-source-uploaded-files-screenshot-2026-02-07-03-49-20-86-f9b251d62f6eb22790b83e2e3c410dd0-1-jpg-screenshot-2026-02-07-03-49-38-67-f9b251d62f6eb22790b83e2e3c410dd0-1-jpg-screenshot-2026-02-07-03-49-00-52-f9b251d62f6eb22790b83e2e3c410dd0-1-jpg",
+      "title": "Add the user’s 3 uploaded images as static product images in `frontend/public/assets/generated/` without AI-generated square/cropped replacements, and wire the single product’s `images` array to these exact asset URLs.\n\nSource uploaded files:\n- `Screenshot_2026-02-07-03-49-20-86_f9b251d62f6eb22790b83e2e3c410dd0-1.jpg`\n- `Screenshot_2026-02-07-03-49-38-67_f9b251d62f6eb22790b83e2e3c410dd0-1.jpg`\n- `Screenshot_2026-02-07-03-49-00-52_f9b251d62f6eb22790b83e2e3c410dd0-1.jpg`",
+      "reqIds": [
+        "REQ-33"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-ensure-the-storefront-uses-the-product-record-s-images-array-for-casuilt-original-leather-watches-for-men-i-e-no-special-case-override-while-preserving-the-existing-special-case-override-behavior-for-classy-watch-for-men",
+      "title": "Ensure the storefront uses the product record’s `images` array for \"Casuilt Original Leather Watches For Men\" (i.e., no special-case override), while preserving the existing special-case override behavior for \"Classy Watch For Men\".",
+      "reqIds": [
+        "REQ-34"
+      ],
+      "version": 1
     }
   ],
   "new_feature_requests": [
@@ -257,20 +288,6 @@
       "status": "pending"
     },
     {
-      "id": "AR-10",
-      "summary": "Add a new product to the catalog: “Classy Watch For Men” priced at 700, with a generated full image set and a premium description",
-      "reqIds": [],
-      "status": "in_progress"
-    },
-    {
-      "id": "AR-11",
-      "summary": "Create a new product in the backend catalog with the exact name “Classy Watch For Men”, price 700, a premium English description, and mark it active/available.",
-      "reqIds": [
-        "REQ-9"
-      ],
-      "status": "pending"
-    },
-    {
       "id": "AR-12",
       "summary": "Add a dedicated manual payment verification status step in admin order workflow: Pending → Payment Verified → Confirmed, so admins can review Transaction ID before confirming orders.",
       "reqIds": [],
@@ -293,38 +310,16 @@
       "status": "in_progress"
     },
     {
-      "id": "AR-15",
-      "summary": "Add a new product: \"Brown leather Luxury Watch For Unisex Rs. 19\" priced at 600, using all 3 provided images, with the provided description, and make delivery/shipping free only for this product (per-product shipping override).",
+      "id": "AR-21",
+      "summary": "Remove all existing products from the store catalog and seed a single active product: \"Casuilt Original Leather Watches For Men\" priced at 650, using the user’s 3 original uploaded images only (no AI-generated square images), with a newly written English description.",
       "reqIds": [],
-      "status": "in_progress"
-    },
-    {
-      "id": "AR-16",
-      "summary": "Update the new product (“Brown leather Luxury Watch For Unisex Rs. 19”) to display only the user’s original uploaded images in the product `images` array; keep any auto-generated square copies stored but not referenced.",
-      "reqIds": [],
-      "status": "in_progress"
-    },
-    {
-      "id": "AR-18",
-      "summary": "Update the backend’s seeded/initialized product record for the product named exactly \"Brown leather Luxury Watch For Unisex Rs. 19\" so that its `images` array points to the user’s original uploaded image URLs (not the auto-generated square copies), and keep any auto-generated square copies on disk unchanged.",
-      "reqIds": [
-        "REQ-26"
-      ],
       "status": "pending"
     },
     {
-      "id": "AR-19",
-      "summary": "Update the backend’s seeded/initialized product record for the product named exactly \"Brown leather Luxury Watch For Unisex Rs. 19\" so that its `images` array contains ONLY the user’s original previously-uploaded image URLs, and remove all references to any auto-generated square images from that product’s `images` array.",
+      "id": "AR-22",
+      "summary": "Update backend product seeding so that after deployment/upgrade the catalog contains exactly one active product and all previously seeded products are removed/absent. The only active product must be:\n- Name: \"Casuilt Original Leather Watches For Men\"\n- Price: 650\n- Description: write a new, clean English description (do not reuse prior product descriptions)\n- Images: exactly 3 image URLs pointing to the static assets generated from the user’s uploaded images under `/assets/generated/`.\nEnsure that `getActiveProducts()` returns only this product.",
       "reqIds": [
-        "REQ-27"
-      ],
-      "status": "pending"
-    },
-    {
-      "id": "AR-20",
-      "summary": "Ensure existing deployments are corrected on upgrade by adding/using conditional upgrade logic (migration) so that any already-stored product named exactly \"Brown leather Luxury Watch For Unisex Rs. 19\" has its `images` array rewritten to ONLY the user’s original previously-uploaded image URLs (removing any auto-generated square image references) without requiring an admin to manually edit the product.",
-      "reqIds": [
-        "REQ-28"
+        "REQ-32"
       ],
       "status": "pending"
     }
